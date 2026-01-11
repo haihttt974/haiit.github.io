@@ -23,7 +23,7 @@ const App = () => (
         <Sonner />
         <EffectsRenderer />
         <EffectsController />
-        <BrowserRouter>
+        <BrowserRouter basename="/haiit.github.io">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/blog" element={<Blog />} />
