@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { EffectsProvider } from "@/contexts/EffectsContext";
 import { EffectsController } from "@/components/effects/EffectsController";
 import { EffectsRenderer } from "@/components/effects/EffectsRenderer";
@@ -23,7 +23,7 @@ const App = () => (
         <Sonner />
         <EffectsRenderer />
         <EffectsController />
-        <BrowserRouter basename="/haiit.github.io">
+        <Router>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/blog" element={<Blog />} />
@@ -32,7 +32,7 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
+        </Router>
       </EffectsProvider>
     </TooltipProvider>
   </QueryClientProvider>
