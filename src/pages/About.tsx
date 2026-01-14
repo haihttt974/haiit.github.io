@@ -3,6 +3,7 @@ import { Layout } from "@/components/layout/Layout";
 import { aboutData } from "@/data/blogData";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useRef } from "react";
 
 const iconMap: Record<string, React.ReactNode> = {
   Github: <Github className="h-5 w-5" />,
@@ -13,6 +14,7 @@ const iconMap: Record<string, React.ReactNode> = {
   Twitter: <Twitter className="h-5 w-5" />,
   Mail: <Mail className="h-5 w-5" />,
 };
+const cvRef = useRef<HTMLDivElement | null>(null);
 
 const About = () => {
   return (
@@ -55,11 +57,18 @@ const About = () => {
           </div>
 
           {/* CV Download Button */}
-          <Button asChild size="lg" className="glow-primary">
-            <a href="#cv-section">
-              <Download className="mr-2 h-5 w-5" />
-              Xem CV của tôi
-            </a>
+          <Button
+            size="lg"
+            className="glow-primary"
+            onClick={() => {
+              cvRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            }}
+          >
+            <Download className="mr-2 h-5 w-5" />
+            Xem CV của tôi
           </Button>
         </div>
 
