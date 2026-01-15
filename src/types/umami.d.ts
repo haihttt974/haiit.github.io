@@ -3,15 +3,18 @@ export {};
 declare global {
   interface Window {
     umami?: {
-      track: (
-        event: string,
-        data?: {
-          url?: string;
-          referrer?: string;
-          [key: string]: any;
-        }
-      ) => Promise<void>;
-      identify: (data: Record<string, any>) => void;
+      // pageview mặc định
+      track(): Promise<void> | void;
+
+      // event
+      track(eventName: string, data?: Record<string, any>): Promise<void> | void;
+
+      // custom payload (set url, referrer, ...)
+      track(
+        callback: (props: Record<string, any>) => Record<string, any>
+      ): Promise<void> | void;
+
+      identify(data?: Record<string, any>): Promise<void> | void;
     };
   }
 }

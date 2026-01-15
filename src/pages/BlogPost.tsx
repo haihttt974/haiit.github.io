@@ -16,15 +16,13 @@ const BlogPost = () => {
   useEffect(() => {
     if (!id) return;
 
-    // ưu tiên slug nếu có, fallback id
-    const key = (post as any)?.slug ?? post?.id ?? id;
+    const hash = window.location.hash || "";          // "#/blog/abc"
+    const umamiPath = hash.startsWith("#") ? hash.slice(1) : hash; // "/blog/abc"
 
-    const path = `/#/blog/${key}`;
-    fetchViews(path)
+    fetchViews(umamiPath || "/")
       .then((v) => setViews(v))
       .catch(() => setViews(0));
-  }, [id, post]);
-
+  }, [id]);
 
   if (!post) {
     return (

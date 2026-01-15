@@ -1,19 +1,23 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
+function getUmamiUrl() {
+  const hash = window.location.hash || "";
+  const path = hash.startsWith("#") ? hash.slice(1) : hash;
+  return path || "/";
+}
+
 export default function UmamiRouteTracker() {
   const location = useLocation();
 
   useEffect(() => {
-    if (!window.umami) return;
+    const url = getUmamiUrl();
 
-    // HashRouter => lấy cả hash
-    const url = location.hash || "/";
-
-    window.umami.track("pageview", {
+    // GỬI PAGEVIEW (KHÔNG PHẢI EVENT)
+    window.umami?.track((props: Record<string, any>) => ({
+      ...props,
       url,
-      referrer: document.referrer || "",
-    });
+    }));
   }, [location.key]);
 
   return null;
