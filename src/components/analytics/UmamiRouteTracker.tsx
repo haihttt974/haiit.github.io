@@ -5,11 +5,16 @@ export default function UmamiRouteTracker() {
   const location = useLocation();
 
   useEffect(() => {
-    const url = `${location.pathname}${location.search}`;
+    if (!window.umami) return;
 
-    // Umami: track pageview route cho HashRouter
-    window.umami?.track(url);
-  }, [location.pathname, location.search]);
+    // HashRouter => lấy cả hash
+    const url = location.hash || "/";
+
+    window.umami.track("pageview", {
+      url,
+      referrer: document.referrer || "",
+    });
+  }, [location.key]);
 
   return null;
 }
