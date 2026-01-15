@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
+import { ArrowLeft, Clock, Calendar, Tag, Share2, Eye } from "lucide-react";
+import { fetchViews } from "@/lib/umamiViews";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Clock, Calendar, Tag, Share2 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { blogPosts, categories } from "@/data/blogData";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +9,18 @@ import { Button } from "@/components/ui/button";
 
 const BlogPost = () => {
   const { id } = useParams();
+  const [views, setViews] = useState<number | null>(null);
+  useEffect(() => {
+    if (!id) return;
+
+    window.umami?.track("blog_post_view", { id });
+
+    const path = `/blog/${id}`;
+
+    fetchViews(path)
+      .then((v) => setViews(v))
+      .catch(() => setViews(null));
+  }, [id]);
   const post = blogPosts.find((p) => p.id === id);
 
   if (!post) {
@@ -65,6 +79,12 @@ const BlogPost = () => {
             </div>
             <div className="flex items-center">
               <Clock className="h-4 w-4 mr-2" />
+              {views !== null && (
+                <div className="flex items-center">
+                  <Eye className="h-4 w-4 mr-2" />
+                  {views.toLocaleString("vi-VN")} lượt xem
+                </div>
+              )}
               {post.readTime}
             </div>
           </div>

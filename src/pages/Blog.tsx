@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search, Clock, Tag, Filter } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
@@ -6,10 +6,13 @@ import { blogPosts, categories } from "@/data/blogData";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
+import { fetchViews } from "@/lib/umamiViews";
 
 const Blog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewsMap, setViewsMap] = useState<Record<string, number>>({});
   
   const selectedCategory = searchParams.get("category") || "all";
 
@@ -27,6 +30,25 @@ const Blog = () => {
   const getCategoryName = (categoryId: string) => {
     return categories.find((c) => c.id === categoryId)?.name || categoryId;
   };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    Promise.all(
+      filteredPosts.map(async (post) => {
+        const path = `/blog/${post.id}`;
+        const views = await fetchViews(path);
+        return [post.id, views] as const;
+      })
+    ).then((entries) => {
+      if (cancelled) return;
+      setViewsMap((prev) => ({ ...prev, ...Object.fromEntries(entries) }));
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filteredPosts]);
 
   return (
     <Layout>
@@ -85,15 +107,21 @@ const Blog = () => {
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <div className="p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <Badge variant="secondary" className="text-xs">
-                      {getCategoryName(post.category)}
-                    </Badge>
-                    <div className="flex items-center text-muted-foreground text-sm">
-                      <Clock className="h-4 w-4 mr-1" />
-                      {post.readTime}
-                    </div>
+                <div className="flex items-center gap-4 mb-4">
+                  <Badge variant="secondary" className="text-xs">
+                    {getCategoryName(post.category)}
+                  </Badge>
+
+                  <div className="flex items-center text-muted-foreground text-sm">
+                    <Clock className="h-4 w-4 mr-1" />
+                    {post.readTime}
                   </div>
+
+                  <div className="flex items-center text-muted-foreground text-sm">
+                    <Eye className="h-4 w-4 mr-1" />
+                    {(viewsMap[post.id] ?? 0).toLocaleString("vi-VN")}
+                  </div>
+                </div>
 
                   <Link to={`/blog/${post.id}`}>
                     <h2 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors line-clamp-2">
