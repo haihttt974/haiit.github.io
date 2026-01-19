@@ -41,6 +41,13 @@
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" />
 
+    <!-- SPA redirect fix (MUST be before Umami) -->
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect");
+      if (redirect) history.replaceState(null, "", redirect);
+    </script>
+    
     <!-- Analytics: Umami -->
     <script
       defer
